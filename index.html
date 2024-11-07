@@ -13,9 +13,9 @@
             margin: 0;
             background-color: #000000;
         }
-        .Profile-Picture{
-                transition: transform 0.3s ease;
-            }
+        .Profile-Picture {
+            transition: transform 0.3s ease;
+        }
         .Profile-Picture:hover {
             transform: scale(1.05);
         }
@@ -23,11 +23,23 @@
             text-align: center;
             padding: 20px;
             background-color: #373737;
-            border-radius: 8px;
+            border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+        .github-logo, .Twitter-logo {
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.3s ease;
+        }
+        .github-logo:hover, .Twitter-logo:hover {
+            transform: scale(1.1);
+            color: grey;
+        }
         h1 {
-            color: #333;
+            color: white;
+        }
+        h3 {
+            color: white;
         }
         p {
             color: #666;
@@ -43,18 +55,28 @@
 </head>
 
 <script>
-function github(){
-    window.location.href = "https://github.com/80dropz";
+function github() {
+    window.open("https://github.com/80dropz", "_blank");
+}
+
+function Twitter() {
+    window.open("https://x.com/80dropz", "_blank");
 }
 </script>
+
 <body>
 
     <div class="container">
-        <img src="https://avatars.githubusercontent.com/u/153262187?v=4", alt="Profile Picture", class="Profile-Picture">
+        <img src="https://avatars.githubusercontent.com/u/153262187?v=4" alt="Profile Picture" class="Profile-Picture" width="150" height="150">
 
-        <h1 style="color: white">80dropz</h1>
-        <h3 style="color: white">Software Developer</h3>
-        <img src="https://clipzy.org/home/img/Github.png" alt="GitHub Logo">
+        <h1>80dropz</h1>
+        <h3>Software Developer</h3>
+        
+        <!-- Social Media Icons -->
+        <div>
+            <img src="https://clipzy.org/home/img/Github.png" alt="GitHub Logo" width="50" height="50" class="github-logo" onclick="github()">
+            <img src="https://clipzy.org/home/img/Twitter.png" alt="Twitter Logo" width="50" height="50" class="Twitter-logo" onclick="Twitter()">
+        </div>
     </div>
 
 </body>
