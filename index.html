@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Welcome to my website!">
     <title>80dropz Website</title>
     <style>
         body {
@@ -12,12 +11,18 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #f4f4f9;
+            background-color: #000000;
+        }
+        .Profile-Picture{
+                transition: transform 0.3s ease;
+            }
+        .Profile-Picture:hover {
+            transform: scale(1.05);
         }
         .container {
             text-align: center;
             padding: 20px;
-            background-color: #ffffff;
+            background-color: #373737;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
@@ -36,12 +41,20 @@
         }
     </style>
 </head>
+
+<script>
+function github(){
+    window.location.href = "https://github.com/80dropz";
+}
+</script>
 <body>
 
     <div class="container">
-        <h1>Welcome to My Website!</h1>
-        <p>This is a simple webpage hosted on GitHub Pages.</p>
-        <p>Check out my projects on <a href="https://github.com/80dropz" target="_blank">GitHub</a>.</p>
+        <img src="https://avatars.githubusercontent.com/u/153262187?v=4", alt="Profile Picture", class="Profile-Picture">
+
+        <h1 style="color: white">80dropz</h1>
+        <h3 style="color: white">Software Developer</h3>
+        <img src="https://clipzy.org/home/images/github.png" alt="GitHub Logo">
     </div>
 
 </body>
