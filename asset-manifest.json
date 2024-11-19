@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/Website/static/css/main.b4608f8d.css",
+    "main.js": "/Website/static/js/main.8673fe8d.js",
+    "static/media/LoginKeyClick.mp3": "/Website/static/media/LoginKeyClick.d1023fb5fce7601cb26d.mp3",
+    "index.html": "/Website/index.html",
+    "main.b4608f8d.css.map": "/Website/static/css/main.b4608f8d.css.map",
+    "main.8673fe8d.js.map": "/Website/static/js/main.8673fe8d.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b4608f8d.css",
+    "static/js/main.8673fe8d.js"
+  ]
+}
