@@ -1,0 +1,12 @@
+.desktop-container {
+    width: 100vw;
+    height: 100vh;
+    background: #0078d7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+  }
+  
