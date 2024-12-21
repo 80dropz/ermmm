@@ -1,83 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>80dropz Website</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #000000;
-        }
-        .Profile-Picture {
-            transition: transform 0.3s ease;
-        }
-        .Profile-Picture:hover {
-            transform: scale(1.05);
-        }
-        .container {
-            text-align: center;
-            padding: 20px;
-            background-color: #373737;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .github-logo, .Twitter-logo {
-            cursor: pointer;
-            margin: 10px;
-            transition: transform 0.3s ease;
-        }
-        .github-logo:hover, .Twitter-logo:hover {
-            transform: scale(1.1);
-            color: grey;
-        }
-        h1 {
-            color: white;
-        }
-        h3 {
-            color: white;
-        }
-        p {
-            color: #666;
-        }
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <title>Simple HTML Page</title>
 </head>
-
-<script>
-function github() {
-    window.open("https://github.com/80dropz", "_blank");
-}
-
-function Twitter() {
-    window.open("https://x.com/80dropz", "_blank");
-}
-</script>
-
 <body>
-
-    <div class="container">
-        <img src="https://avatars.githubusercontent.com/u/153262187?v=4" alt="Profile Picture" class="Profile-Picture" width="150" height="150">
-
-        <h1>80dropz</h1>
-        <h3>Software Developer</h3>
-        
-        <!-- Social Media Icons -->
-        <div>
-            <img src="https://clipzy.org/home/img/Github.png" alt="GitHub Logo" width="50" height="50" class="github-logo" onclick="github()">
-            <img src="https://clipzy.org/home/img/Twitter.png" alt="Twitter Logo" width="50" height="50" class="Twitter-logo" onclick="Twitter()">
-        </div>
-    </div>
-
+    <h1>Hello, World!</h1>
+    <p>This is a simple HTML page.</p>
 </body>
 </html>
