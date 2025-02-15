@@ -69,20 +69,6 @@
         }
     </style>
     <script>
-        //if you find this dm me on discord for a free year key
-        //if you find this dm me on discord for a free year key
-        //if you find this dm me on discord for a free year key
-        //if you find this dm me on discord for a free year key
-        //if you find this dm me on discord for a free year key
-        //if you find this dm me on discord for a free year key
-        //if you find this dm me on discord for a free year key
-        //if you find this dm me on discord for a free year key
-        //if you find this dm me on discord for a free year key
-        //if you find this dm me on discord for a free year key
-        //if you find this dm me on discord for a free year key
-        //if you find this dm me on discord for a free year key
-        //if you find this dm me on discord for a free year key
-        
         const keys = [
             "key1-abc123",
             "key2-def456",
@@ -107,11 +93,11 @@
 
         // Initialize Linkvertise
         linkvertise(1196977, {
-            whitelist: [],
-            blacklist: ["https://manipulator.life/"],
+            whitelist: [], // Allow all domains
+            blacklist: [], // Remove the blacklist entry for manipulator.life
             onSuccess: function() {
                 // Redirect to the same page with a success parameter
-                window.location.href = "?success=true";
+                window.location.href = window.location.origin + "?success=true";
             }
         });
 
@@ -128,7 +114,7 @@
         By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
         This key only works for you!
     </div>
-    <button onclick="window.location.href='https://link-target.net/1196977/freerustrefined';">Complete Offer</button>
+    <button onclick="linkvertise.open();">Complete Offer</button>
     <div id="key-display"></div>
 </body>
 </html>
