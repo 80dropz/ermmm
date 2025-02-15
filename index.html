@@ -6,10 +6,9 @@
     <title>Get Your Key</title>
     <script src="https://publisher.linkvertise.com/cdn/linkvertise.js"></script>
     <style>
-        /* Dark theme styles */
         body {
-            background-color: #121212; /* Dark background */
-            color: #ffffff; /* White text */
+            background-color: #121212;
+            color: #ffffff;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
@@ -17,26 +16,26 @@
         }
 
         h1 {
-            color: #bb86fc; /* Light purple for headings */
+            color: #bb86fc;
             font-size: 24px;
             margin-bottom: 10px;
         }
 
         .header-date {
             font-size: 18px;
-            color: #bb86fc; /* Light purple for date */
+            color: #bb86fc;
             margin-bottom: 20px;
         }
 
         .terms {
             font-size: 14px;
-            color: #a0a0a0; /* Light gray for terms */
+            color: #a0a0a0;
             margin-bottom: 20px;
         }
 
         button {
-            background-color: #bb86fc; /* Light purple button */
-            color: #121212; /* Dark text */
+            background-color: #bb86fc;
+            color: #121212;
             border: none;
             padding: 10px 20px;
             font-size: 16px;
@@ -47,20 +46,20 @@
         }
 
         button:hover {
-            background-color: #9a67ea; /* Darker purple on hover */
+            background-color: #9a67ea;
         }
 
         #key-display {
             margin-top: 20px;
             padding: 10px;
-            background-color: #1e1e1e; /* Slightly lighter dark background */
+            background-color: #1e1e1e;
             border-radius: 5px;
-            color: #ffffff; /* White text */
+            color: #ffffff;
             font-size: 18px;
         }
 
         a {
-            color: #bb86fc; /* Light purple for links */
+            color: #bb86fc;
             text-decoration: none;
         }
 
@@ -73,40 +72,33 @@
             "key1-abc123",
             "key2-def456",
             "key3-ghi789",
-            // Add more keys as needed
         ];
 
-        // Track used keys
         let usedKeys = [];
 
-        // Function to display a key
         function displayKey() {
             const keyDisplay = document.getElementById("key-display");
             if (keys.length > 0) {
-                const key = keys.shift(); // Get the first key and remove it from the list
-                usedKeys.push(key); // Mark the key as used
+                const key = keys.shift();
+                usedKeys.push(key);
                 keyDisplay.innerHTML = `Your key is: <strong>${key}</strong>`;
             } else {
                 keyDisplay.innerHTML = "Sorry, no more keys are available.";
             }
         }
 
-        // Initialize Linkvertise
         linkvertise(1196977, {
-            whitelist: [], // Allow all domains
-            blacklist: [], // Remove the blacklist entry for manipulator.life
+            whitelist: [],
+            blacklist: [],
             onSuccess: function() {
-                // Redirect to the same page with a success parameter
                 window.location.href = window.location.origin + "?success=true";
             }
         });
 
-        // Function to open the offer in a new tab
         function openOffer() {
             window.open("https://link-target.net/1196977/freerustrefined", "_blank");
         }
 
-        // Check for success parameter in the URL
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has("success")) {
             displayKey();
