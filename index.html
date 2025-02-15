@@ -101,6 +101,11 @@
             }
         });
 
+        // Function to open the offer in a new tab
+        function openOffer() {
+            window.open("https://link-target.net/1196977/freerustrefined", "_blank");
+        }
+
         // Check for success parameter in the URL
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has("success")) {
@@ -109,12 +114,13 @@
     </script>
 </head>
 <body>
+    <div class="header-date">12/16/2560 in Gasp2024-13 Dec 2019</div>
     <h1>Complete the Linkvertise Offer to Get Your Key</h1>
     <div class="terms">
         By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
         This key only works for you!
     </div>
-    <button onclick="linkvertise.open();">Complete Offer</button>
+    <button onclick="openOffer();">Complete Offer</button>
     <div id="key-display"></div>
 </body>
 </html>
