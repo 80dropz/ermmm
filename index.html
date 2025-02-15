@@ -3,10 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple HTML Page</title>
+    <title>Get Your Key</title>
+    <script src="https://publisher.linkvertise.com/cdn/linkvertise.js"></script>
+    <script>
+        // List of keys
+        const keys = [
+            "key1-abc123",
+            "key2-def456",
+            "key3-ghi789",
+            // Add more keys as needed
+        ];
+
+        // Track used keys
+        let usedKeys = [];
+
+        // Function to display a key
+        function displayKey() {
+            const keyDisplay = document.getElementById("key-display");
+            if (keys.length > 0) {
+                const key = keys.shift(); // Get the first key and remove it from the list
+                usedKeys.push(key); // Mark the key as used
+                keyDisplay.innerHTML = `Your key is: <strong>${key}</strong>`;
+            } else {
+                keyDisplay.innerHTML = "Sorry, no more keys are available.";
+            }
+        }
+
+        // Initialize Linkvertise
+        linkvertise(1196977, {
+            whitelist: [],
+            blacklist: ["https://manipulator.life/"],
+            onSuccess: function() {
+                // Redirect to the same page with a success parameter
+                window.location.href = "?success=true";
+            }
+        });
+
+        // Check for success parameter in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("success")) {
+            displayKey();
+        }
+    </script>
 </head>
 <body>
-    <h1>Hello, World!</h1>
-    <p>This is a simple HTML page.</p>
+    <h1>Complete the Linkvertise Offer to Get Your Key</h1>
+    <p>Click the button below to proceed:</p>
+    <button onclick="linkvertise.open();">Complete Offer</button>
+    <div id="key-display" style="margin-top: 20px;"></div>
 </body>
 </html>
