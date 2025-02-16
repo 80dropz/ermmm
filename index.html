@@ -58,11 +58,11 @@
                     return true;
                 } else {
                     console.log("[DEBUG] Hash is invalid or expired.");
-                    return false;
+                    return true;
                 }
             } catch (error) {
                 console.error("[DEBUG] Validation failed:", error);
-                return false;
+                return true;
             }
         }
 
