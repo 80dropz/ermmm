@@ -78,18 +78,56 @@
             }
         }
 
-        // Linkvertise configuration
-        linkvertise(1196977, {
-            whitelist: [],
-            blacklist: [],
-            onSuccess: function() {
-                console.log("[DEBUG] Linkvertise onSuccess triggered!");
-                window.location.href = window.location.origin;
+        // Check if Linkvertise script is loaded
+        function isLinkvertiseLoaded() {
+            return typeof linkvertise === 'function';
+        }
+
+        // Fallback if Linkvertise script fails to load
+        function handleLinkvertiseFailure() {
+            console.error("[DEBUG] Linkvertise script failed to load. Please disable ad blockers or refresh the page.");
+            document.getElementById("key-display").innerHTML = "Failed to load offer. Please disable ad blockers or refresh the page.";
+        }
+
+        // Wait for the script to load
+        function waitForLinkvertise(callback, fallback) {
+            const maxAttempts = 10;
+            let attempts = 0;
+
+            const interval = setInterval(() => {
+                if (isLinkvertiseLoaded()) {
+                    clearInterval(interval);
+                    callback();
+                } else if (attempts >= maxAttempts) {
+                    clearInterval(interval);
+                    fallback();
+                }
+                attempts++;
+            }, 500); // Check every 500ms
+        }
+
+        // Initialize Linkvertise after the script is loaded
+        waitForLinkvertise(
+            () => {
+                console.log("[DEBUG] Linkvertise script loaded successfully!");
+                initializeLinkvertise();
             },
-            onFailure: function() {
-                console.log("[DEBUG] Linkvertise onFailure triggered!");
-            }
-        });
+            handleLinkvertiseFailure
+        );
+
+        function initializeLinkvertise() {
+            linkvertise(1196977, {
+                whitelist: [],
+                blacklist: [],
+                onSuccess: function() {
+                    console.log("[DEBUG] Linkvertise onSuccess triggered!");
+                    window.location.href = window.location.origin;
+                },
+                onFailure: function() {
+                    console.log("[DEBUG] Linkvertise onFailure triggered!");
+                }
+            });
+        }
 
         function openOffer() {
             console.log("[DEBUG] Opening offer...");
@@ -102,7 +140,7 @@
     </script>
 </head>
 <body>
-    <h1>Complete the Linkvertise Offer to Get Your Key</h1>
+    <h1>Complete the Linkvertise Offer to Get Your Key 1</h1>
     <div class="terms">
         By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
         This key only works for you!
