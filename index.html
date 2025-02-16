@@ -23,6 +23,8 @@
         // Function to call the API and get a key
         async function getKey() {
             const keyDisplay = document.getElementById("key-display");
+            const urlParams = new URLSearchParams(window.location.search);
+            const hash = urlParams.get("hash");
             keyDisplay.innerHTML = "Fetching your key...";
 
             try {
