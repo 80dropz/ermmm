@@ -9,55 +9,105 @@
         body { background-color: #121212; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 20px; text-align: center; }
         h1 { color: #bb86fc; font-size: 24px; margin-bottom: 10px; }
         .terms { font-size: 14px; color: #a0a0a0; margin-bottom: 20px; }
-        .offer-button { background-color: #bb86fc; color: #121212; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; transition: background-color 0.3s ease; margin-bottom: 20px; text-decoration: none; display: inline-block; }
-        .offer-button:hover { background-color: #9a67ea; }
+        button { background-color: #bb86fc; color: #121212; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; transition: background-color 0.3s ease; margin-bottom: 20px; }
+        button:hover { background-color: #9a67ea; }
         #key-display { margin-top: 20px; padding: 10px; background-color: #1e1e1e; border-radius: 5px; color: #ffffff; font-size: 18px; }
+        a { color: #bb86fc; text-decoration: none; }
+        a:hover { text-decoration: underline; }
     </style>
     <script>
-        const API_URL = "https://vxnmw80go0.execute-api.us-east-1.amazonaws.com/prod/get-key";
-        const API_KEY = "PAa5g1Lp8U6zfvs2bCtTI9jVnRaMKqoJ4Nrl2oZk";
+        const keys = ["key1-abc123", "key2-def456", "key3-ghi789"];
+        let usedKeys = [];
 
-        async function getKey() {
+        // Function to display the key
+        function displayKey() {
+            console.log("[DEBUG] Displaying key...");
             const keyDisplay = document.getElementById("key-display");
-            keyDisplay.innerHTML = "Fetching your key...";
-            
-            try {
-                const urlParams = new URLSearchParams(window.location.search);
-                const hash = urlParams.get("hash");
-
-                if (!hash) {
-                    keyDisplay.innerHTML = "No verification hash found. Please complete the offer first.";
-                    return;
-                }
-
-                const response = await fetch(`${API_URL}?hash=${hash}`, {
-                    headers: { "x-api-key": API_KEY }
-                });
-
-                if (!response.ok) throw new Error(`API error: ${response.status}`);
-                
-                const data = await response.json();
-                
-                if (data.key) {
-                    keyDisplay.innerHTML = `Your key is: <strong>${data.key}</strong>`;
-                } else {
-                    keyDisplay.innerHTML = data.error || "No keys available";
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                keyDisplay.innerHTML = "Failed to retrieve key. Please try again.";
+            if (keys.length > 0) {
+                const key = keys.shift();
+                usedKeys.push(key);
+                keyDisplay.innerHTML = `Your key is: <strong>${key}</strong>`;
+                console.log("[DEBUG] Key displayed:", key);
+            } else {
+                keyDisplay.innerHTML = "Sorry, no more keys are available.";
+                console.log("[DEBUG] No keys left");
             }
         }
 
-        function initialize() {
+        // Check URL for a valid hash
+        function checkForValidHash() {
+            console.log("[DEBUG] Checking for valid hash...");
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has("hash")) {
-                getKey();
+            const hash = urlParams.get("hash");
+
+            if (hash) {
+                console.log("[DEBUG] Hash found in URL:", hash);
+                // Assume the hash is valid (since we can't validate it without a backend)
+                displayKey();
+            } else {
+                console.log("[DEBUG] No hash found in URL");
             }
         }
 
-        // Start initialization when page loads
-        window.onload = initialize;
+        // Check if Linkvertise script is loaded
+        function isLinkvertiseLoaded() {
+            return typeof linkvertise === 'function';
+        }
+
+        // Fallback if Linkvertise script fails to load
+        function handleLinkvertiseFailure() {
+            console.error("[DEBUG] Linkvertise script failed to load. Please disable ad blockers or refresh the page.");
+            document.getElementById("key-display").innerHTML = "Failed to load offer. Please disable ad blockers or refresh the page.";
+        }
+
+        // Wait for the script to load
+        function waitForLinkvertise(callback, fallback) {
+            const maxAttempts = 10;
+            let attempts = 0;
+
+            const interval = setInterval(() => {
+                if (isLinkvertiseLoaded()) {
+                    clearInterval(interval);
+                    callback();
+                } else if (attempts >= maxAttempts) {
+                    clearInterval(interval);
+                    fallback();
+                }
+                attempts++;
+            }, 500); // Check every 500ms
+        }
+
+        // Initialize Linkvertise after the script is loaded
+        waitForLinkvertise(
+            () => {
+                console.log("[DEBUG] Linkvertise script loaded successfully!");
+                initializeLinkvertise();
+            },
+            handleLinkvertiseFailure
+        );
+
+        function initializeLinkvertise() {
+            linkvertise(1196977, {
+                whitelist: [],
+                blacklist: [],
+                onSuccess: function() {
+                    console.log("[DEBUG] Linkvertise onSuccess triggered!");
+                    window.location.href = window.location.origin + "?hash=completed";
+                },
+                onFailure: function() {
+                    console.log("[DEBUG] Linkvertise onFailure triggered!");
+                }
+            });
+        }
+
+        function openOffer() {
+            console.log("[DEBUG] Opening offer...");
+            window.open("https://link-target.net/1196977/freerustrefined", "_blank");
+        }
+
+        // Initial check when the page loads
+        console.log("[DEBUG] Page loaded");
+        checkForValidHash();
     </script>
 </head>
 <body>
@@ -66,23 +116,7 @@
         By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
         This key only works for you!
     </div>
-    <a href="https://linkvertise.com/1196977/freerustrefined" class="offer-button linkvertise-link">Complete Offer</a>
+    <button onclick="openOffer();">Complete Offer</button>
     <div id="key-display"></div>
-
-    <script>
-        // Initialize Linkvertise after script loads
-        window.addEventListener('load', () => {
-            linkvertise(1196977, {
-                whitelist: [],
-                blacklist: ["https://manipulator.life/"],
-                onSuccess: () => {
-                    window.location.reload();
-                },
-                onFailure: () => {
-                    document.getElementById("key-display").innerHTML = "Please complete the offer to get your key.";
-                }
-            });
-        });
-    </script>
 </body>
 </html>
