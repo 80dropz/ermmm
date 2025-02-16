@@ -35,21 +35,31 @@
             }
         }
 
-        // Validate the Linkvertise hash
+        // Validate the Linkvertise hash using a proxy server
         async function validateHash(hash) {
             console.log("[DEBUG] Validating hash:", hash);
             try {
-                const apiUrl = `https://publisher.linkvertise.com/api/v1/redirect/link/check?url=${encodeURIComponent(window.location.href)}`;
-                console.log("[DEBUG] Calling API:", apiUrl);
-                
+                // Replace with your proxy server URL
+                const proxyUrl = "https://your-proxy-server.com/api"; // Example: "https://my-proxy.com/validate"
+                const apiUrl = `${proxyUrl}?url=${encodeURIComponent(window.location.href)}`;
+                console.log("[DEBUG] Calling API via proxy:", apiUrl);
+
                 const response = await fetch(apiUrl, {
                     headers: { 'Content-Type': 'application/json' }
                 });
-                
+
+                console.log("[DEBUG] API Response Status:", response.status);
                 const data = await response.json();
-                console.log("[DEBUG] API Response:", data);
-                
-                return data.success; 
+                console.log("[DEBUG] API Response Data:", data);
+
+                // Check if the response contains `success: true`
+                if (data.success) {
+                    console.log("[DEBUG] Hash is valid!");
+                    return true;
+                } else {
+                    console.log("[DEBUG] Hash is invalid or expired.");
+                    return false;
+                }
             } catch (error) {
                 console.error("[DEBUG] Validation failed:", error);
                 return false;
@@ -61,12 +71,12 @@
             console.log("[DEBUG] Checking for valid hash...");
             const urlParams = new URLSearchParams(window.location.search);
             const hash = urlParams.get("hash");
-            
+
             if (hash) {
                 console.log("[DEBUG] Hash found in URL:", hash);
                 const isValid = await validateHash(hash);
                 console.log("[DEBUG] Hash validation result:", isValid);
-                
+
                 if (isValid) {
                     displayKey();
                 } else {
@@ -140,7 +150,7 @@
     </script>
 </head>
 <body>
-    <h1>Complete the Linkvertise Offer to Get Your Key 1</h1>
+    <h1>Complete the Linkvertise Offer to Get Your Key</h1>
     <div class="terms">
         By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
         This key only works for you!
