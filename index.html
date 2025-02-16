@@ -6,7 +6,6 @@
     <title>Get Your Key</title>
     <script src="https://publisher.linkvertise.com/cdn/linkvertise.js"></script>
     <style>
-        /* Your original CSS styles (unchanged) */
         body { background-color: #121212; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 20px; text-align: center; }
         h1 { color: #bb86fc; font-size: 24px; margin-bottom: 10px; }
         .terms { font-size: 14px; color: #a0a0a0; margin-bottom: 20px; }
@@ -39,8 +38,7 @@
         async function validateHash(hash) {
             console.log("[DEBUG] Validating hash:", hash);
             try {
-                // Replace with your proxy server URL
-                const proxyUrl = "https://your-proxy-server.com/api"; // Example: "https://my-proxy.com/validate"
+                const proxyUrl = "http://localhost:3000/api"; // Replace with your proxy server URL
                 const apiUrl = `${proxyUrl}?url=${encodeURIComponent(window.location.href)}`;
                 console.log("[DEBUG] Calling API via proxy:", apiUrl);
 
@@ -150,7 +148,7 @@
     </script>
 </head>
 <body>
-    <h1>Complete the Linkvertise Offer to Get Your Key a</h1>
+    <h1>Complete the Linkvertise Offer to Get Your Key</h1>
     <div class="terms">
         By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
         This key only works for you!
