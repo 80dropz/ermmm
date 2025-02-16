@@ -20,6 +20,16 @@
         const keys = ["key1-abc123", "key2-def456", "key3-ghi789"];
         let usedKeys = [];
 
+
+
+        function getRandomKey() {
+        if (keys.length > 0) {
+            const randomIndex = Math.floor(Math.random() * keys.length);
+            return keys.splice(randomIndex, 1)[0]; // Remove and return the key
+        }
+        return null; // No keys left
+    }
+        
         // Function to display the key
         function displayKey() {
             console.log("[DEBUG] Displaying key...");
