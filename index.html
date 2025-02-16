@@ -39,7 +39,6 @@
         async function validateHash(hash) {
             console.log("[DEBUG] Validating hash:", hash);
             try {
-                return true;
                 // Replace with your proxy server URL
                 const proxyUrl = "https://your-proxy-server.com/api"; // Example: "https://my-proxy.com/validate"
                 const apiUrl = `${proxyUrl}?url=${encodeURIComponent(window.location.href)}`;
