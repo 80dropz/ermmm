@@ -16,107 +16,91 @@
         a:hover { text-decoration: underline; }
     </style>
     <script>
-        // API Gateway endpoint and API key
         const API_URL = "https://vxnmw80go0.execute-api.us-east-1.amazonaws.com/prod/get-key";
         const API_KEY = "PAa5g1Lp8U6zfvs2bCtTI9jVnRaMKqoJ4Nrl2oZk";
 
-        // Function to call the API and get a key
         async function getKey() {
             const keyDisplay = document.getElementById("key-display");
-            const urlParams = new URLSearchParams(window.location.search);
-            const hash = urlParams.get("hash");
             keyDisplay.innerHTML = "Fetching your key...";
-
+            
             try {
-                // Extract the hash from the URL
                 const urlParams = new URLSearchParams(window.location.search);
                 const hash = urlParams.get("hash");
 
                 if (!hash) {
-                    keyDisplay.innerHTML = "No hash found in the URL. Please complete the offer.";
+                    keyDisplay.innerHTML = "No verification hash found. Please complete the offer first.";
                     return;
                 }
 
-                // Call the API
                 const response = await fetch(`${API_URL}?hash=${hash}`, {
-                    method: "GET",
-                    headers: {
-                        "x-api-key": API_KEY
-                    }
+                    headers: { "x-api-key": API_KEY }
                 });
 
-                if (!response.ok) {
-                    throw new Error(`API error: ${response.status}`);
-                }
-
+                if (!response.ok) throw new Error(`API error: ${response.status}`);
+                
                 const data = await response.json();
-
+                
                 if (data.key) {
                     keyDisplay.innerHTML = `Your key is: <strong>${data.key}</strong>`;
-                } else if (data.error) {
-                    keyDisplay.innerHTML = `Error: ${data.error}`;
                 } else {
-                    keyDisplay.innerHTML = "No key available.";
+                    keyDisplay.innerHTML = data.error || "No keys available";
                 }
             } catch (error) {
                 console.error("Error:", error);
-                keyDisplay.innerHTML = "Failed to fetch key. Please try again.";
+                keyDisplay.innerHTML = "Failed to retrieve key. Please try again.";
             }
         }
 
-        // Initialize Linkvertise
         function initializeLinkvertise() {
             linkvertise(1196977, {
                 whitelist: [],
                 blacklist: ["https://manipulator.life/"],
-                onSuccess: function() {
-                    console.log("Offer completed! Fetching key...");
-                    getKey(); // Call the API to get the key
+                onSuccess: () => {
+                    window.location.reload();
                 },
-                onFailure: function() {
-                    console.log("Offer failed or was skipped.");
+                onFailure: () => {
                     document.getElementById("key-display").innerHTML = "Please complete the offer to get your key.";
                 }
             });
         }
 
-        // Wait for the Linkvertise script to load
         function waitForLinkvertise(callback, fallback) {
-            const maxAttempts = 10;
             let attempts = 0;
-
             const interval = setInterval(() => {
                 if (typeof linkvertise === 'function') {
                     clearInterval(interval);
                     callback();
-                } else if (attempts >= maxAttempts) {
+                } else if (++attempts >= 10) {
                     clearInterval(interval);
                     fallback();
                 }
-                attempts++;
-            }, 500); // Check every 500ms
+            }, 500);
         }
 
-        // Start the process
-        waitForLinkvertise(
-            () => {
-                console.log("Linkvertise script loaded successfully!");
-                initializeLinkvertise();
-            },
-            () => {
-                console.error("Linkvertise script failed to load.");
-                document.getElementById("key-display").innerHTML = "Failed to load offer. Please disable ad blockers or refresh the page.";
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has("hash")) {
+                getKey();
             }
-        );
+
+            waitForLinkvertise(
+                () => {
+                    console.log("Linkvertise loaded");
+                },
+                () => {
+                    document.getElementById("key-display").innerHTML = "Please disable ad blockers and refresh the page.";
+                }
+            );
+        };
     </script>
 </head>
 <body>
-    <h1>Complete the Linkvertise Offer to Get Your Keysw </h1>
+    <h1>Complete the Linkvertise Offer to Get Your Key</h1>
     <div class="terms">
         By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
         This key only works for you!
     </div>
-    <button onclick="waitForLinkvertise();">Complete Offe sr</button>
+    <button onclick="initializeLinkvertise()">Complete Offer</button>
     <div id="key-display"></div>
 </body>
 </html>
