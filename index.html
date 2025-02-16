@@ -22,44 +22,59 @@
 
         // Function to display the key
         function displayKey() {
+            console.log("[DEBUG] Displaying key...");
             const keyDisplay = document.getElementById("key-display");
             if (keys.length > 0) {
                 const key = keys.shift();
                 usedKeys.push(key);
                 keyDisplay.innerHTML = `Your key is: <strong>${key}</strong>`;
+                console.log("[DEBUG] Key displayed:", key);
             } else {
                 keyDisplay.innerHTML = "Sorry, no more keys are available.";
+                console.log("[DEBUG] No keys left");
             }
         }
 
         // Validate the Linkvertise hash
         async function validateHash(hash) {
+            console.log("[DEBUG] Validating hash:", hash);
             try {
-                const response = await fetch(`https://publisher.linkvertise.com/api/v1/redirect/link/check?url=${encodeURIComponent(window.location.href)}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
+                const apiUrl = `https://publisher.linkvertise.com/api/v1/redirect/link/check?url=${encodeURIComponent(window.location.href)}`;
+                console.log("[DEBUG] Calling API:", apiUrl);
+                
+                const response = await fetch(apiUrl, {
+                    headers: { 'Content-Type': 'application/json' }
                 });
+                
                 const data = await response.json();
-                return data.success; // Returns true if the hash is valid
+                console.log("[DEBUG] API Response:", data);
+                
+                return data.success; 
             } catch (error) {
-                console.error("Validation failed:", error);
+                console.error("[DEBUG] Validation failed:", error);
                 return false;
             }
         }
 
         // Check URL for a valid hash
         async function checkForValidHash() {
+            console.log("[DEBUG] Checking for valid hash...");
             const urlParams = new URLSearchParams(window.location.search);
             const hash = urlParams.get("hash");
             
             if (hash) {
+                console.log("[DEBUG] Hash found in URL:", hash);
                 const isValid = await validateHash(hash);
+                console.log("[DEBUG] Hash validation result:", isValid);
+                
                 if (isValid) {
                     displayKey();
                 } else {
                     document.getElementById("key-display").innerHTML = "Invalid or expired offer. Please complete the offer again.";
+                    console.log("[DEBUG] Invalid hash");
                 }
+            } else {
+                console.log("[DEBUG] No hash found in URL");
             }
         }
 
@@ -68,16 +83,21 @@
             whitelist: [],
             blacklist: [],
             onSuccess: function() {
-                // Let Linkvertise handle the redirect with the hash
+                console.log("[DEBUG] Linkvertise onSuccess triggered!");
                 window.location.href = window.location.origin;
+            },
+            onFailure: function() {
+                console.log("[DEBUG] Linkvertise onFailure triggered!");
             }
         });
 
         function openOffer() {
+            console.log("[DEBUG] Opening offer...");
             window.open("https://link-target.net/1196977/freerustrefined", "_blank");
         }
 
-        // Run validation check when the page loads
+        // Initial check when the page loads
+        console.log("[DEBUG] Page loaded");
         checkForValidHash();
     </script>
 </head>
