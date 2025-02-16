@@ -9,11 +9,9 @@
         body { background-color: #121212; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 20px; text-align: center; }
         h1 { color: #bb86fc; font-size: 24px; margin-bottom: 10px; }
         .terms { font-size: 14px; color: #a0a0a0; margin-bottom: 20px; }
-        button { background-color: #bb86fc; color: #121212; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; transition: background-color 0.3s ease; margin-bottom: 20px; }
-        button:hover { background-color: #9a67ea; }
+        .offer-button { background-color: #bb86fc; color: #121212; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; transition: background-color 0.3s ease; margin-bottom: 20px; text-decoration: none; display: inline-block; }
+        .offer-button:hover { background-color: #9a67ea; }
         #key-display { margin-top: 20px; padding: 10px; background-color: #1e1e1e; border-radius: 5px; color: #ffffff; font-size: 18px; }
-        a { color: #bb86fc; text-decoration: none; }
-        a:hover { text-decoration: underline; }
     </style>
     <script>
         const API_URL = "https://vxnmw80go0.execute-api.us-east-1.amazonaws.com/prod/get-key";
@@ -51,7 +49,29 @@
             }
         }
 
-        function initializeLinkvertise() {
+        function initialize() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has("hash")) {
+                getKey();
+            }
+        }
+
+        // Start initialization when page loads
+        window.onload = initialize;
+    </script>
+</head>
+<body>
+    <h1>Complete the Linkvertise Offer to Get Your Key</h1>
+    <div class="terms">
+        By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
+        This key only works for you!
+    </div>
+    <a href="https://linkvertise.com/1196977/freerustrefined" class="offer-button linkvertise-link">Complete Offer</a>
+    <div id="key-display"></div>
+
+    <script>
+        // Initialize Linkvertise after script loads
+        window.addEventListener('load', () => {
             linkvertise(1196977, {
                 whitelist: [],
                 blacklist: ["https://manipulator.life/"],
@@ -62,45 +82,7 @@
                     document.getElementById("key-display").innerHTML = "Please complete the offer to get your key.";
                 }
             });
-        }
-
-        function waitForLinkvertise(callback, fallback) {
-            let attempts = 0;
-            const interval = setInterval(() => {
-                if (typeof linkvertise === 'function') {
-                    clearInterval(interval);
-                    callback();
-                } else if (++attempts >= 10) {
-                    clearInterval(interval);
-                    fallback();
-                }
-            }, 500);
-        }
-
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has("hash")) {
-                getKey();
-            }
-
-            waitForLinkvertise(
-                () => {
-                    console.log("Linkvertise loaded");
-                },
-                () => {
-                    document.getElementById("key-display").innerHTML = "Please disable ad blockers and refresh the page.";
-                }
-            );
-        };
+        });
     </script>
-</head>
-<body>
-    <h1>Complete the Linkvertise Offer to Get Your Key</h1>
-    <div class="terms">
-        By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
-        This key only works for you!
-    </div>
-    <button onclick="initializeLinkvertise()">Complete Offer</button>
-    <div id="key-display"></div>
 </body>
 </html>
