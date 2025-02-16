@@ -6,14 +6,148 @@
     <title>Get Your Key</title>
     <script src="https://publisher.linkvertise.com/cdn/linkvertise.js"></script>
     <style>
+        /* Your original CSS styles (unchanged) */
         body { background-color: #121212; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 20px; text-align: center; }
         h1 { color: #bb86fc; font-size: 24px; margin-bottom: 10px; }
         .terms { font-size: 14px; color: #a0a0a0; margin-bottom: 20px; }
         button { background-color: #bb86fc; color: #121212; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; transition: background-color 0.3s ease; margin-bottom: 20px; }
         button:hover { background-color: #9a67ea; }
         #key-display { margin-top: 20px; padding: 10px; background-color: #1e1e1e; border-radius: 5px; color: #ffffff; font-size: 18px; }
-        .hidden { display: none; }
+        a { color: #bb86fc; text-decoration: none; }
+        a:hover { text-decoration: underline; }
     </style>
+    <script>
+        const keys = ["key1-abc123", "key2-def456", "key3-ghi789"];
+        let usedKeys = [];
+
+        // Function to display the key
+        function displayKey() {
+            console.log("[DEBUG] Displaying key...");
+            const keyDisplay = document.getElementById("key-display");
+            if (keys.length > 0) {
+                const key = keys.shift();
+                usedKeys.push(key);
+                keyDisplay.innerHTML = `Your key is: <strong>${key}</strong>`;
+                console.log("[DEBUG] Key displayed:", key);
+            } else {
+                keyDisplay.innerHTML = "Sorry, no more keys are available.";
+                console.log("[DEBUG] No keys left");
+            }
+        }
+
+        // Validate the Linkvertise hash using a proxy server
+        async function validateHash(hash) {
+            console.log("[DEBUG] Validating hash:", hash);
+            try {
+                // Replace with your proxy server URL
+                const proxyUrl = "https://your-proxy-server.com/api"; // Example: "https://my-proxy.com/validate"
+                const apiUrl = `${proxyUrl}?url=${encodeURIComponent(window.location.href)}`;
+                console.log("[DEBUG] Calling API via proxy:", apiUrl);
+
+                const response = await fetch(apiUrl, {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                console.log("[DEBUG] API Response Status:", response.status);
+                const data = await response.json();
+                console.log("[DEBUG] API Response Data:", data);
+
+                // Check if the response contains `success: true`
+                if (data.success) {
+                    console.log("[DEBUG] Hash is valid!");
+                    return true;
+                } else {
+                    console.log("[DEBUG] Hash is invalid or expired.");
+                    return false;
+                }
+            } catch (error) {
+                console.error("[DEBUG] Validation failed:", error);
+                return false;
+            }
+        }
+
+        // Check URL for a valid hash
+        async function checkForValidHash() {
+            console.log("[DEBUG] Checking for valid hash...");
+            const urlParams = new URLSearchParams(window.location.search);
+            const hash = urlParams.get("hash");
+
+            if (hash) {
+                console.log("[DEBUG] Hash found in URL:", hash);
+                const isValid = await validateHash(hash);
+                console.log("[DEBUG] Hash validation result:", isValid);
+
+                if (isValid) {
+                    displayKey();
+                } else {
+                    document.getElementById("key-display").innerHTML = "Invalid or expired offer. Please complete the offer again.";
+                    console.log("[DEBUG] Invalid hash");
+                }
+            } else {
+                console.log("[DEBUG] No hash found in URL");
+            }
+        }
+
+        // Check if Linkvertise script is loaded
+        function isLinkvertiseLoaded() {
+            return typeof linkvertise === 'function';
+        }
+
+        // Fallback if Linkvertise script fails to load
+        function handleLinkvertiseFailure() {
+            console.error("[DEBUG] Linkvertise script failed to load. Please disable ad blockers or refresh the page.");
+            document.getElementById("key-display").innerHTML = "Failed to load offer. Please disable ad blockers or refresh the page.";
+        }
+
+        // Wait for the script to load
+        function waitForLinkvertise(callback, fallback) {
+            const maxAttempts = 10;
+            let attempts = 0;
+
+            const interval = setInterval(() => {
+                if (isLinkvertiseLoaded()) {
+                    clearInterval(interval);
+                    callback();
+                } else if (attempts >= maxAttempts) {
+                    clearInterval(interval);
+                    fallback();
+                }
+                attempts++;
+            }, 500); // Check every 500ms
+        }
+
+        // Initialize Linkvertise after the script is loaded
+        waitForLinkvertise(
+            () => {
+                console.log("[DEBUG] Linkvertise script loaded successfully!");
+                initializeLinkvertise();
+            },
+            handleLinkvertiseFailure
+        );
+
+        function initializeLinkvertise() {
+            linkvertise(1196977, {
+                whitelist: [],
+                blacklist: [],
+                onSuccess: function() {
+                    console.log("[DEBUG] Linkvertise onSuccess triggered!");
+                    window.location.href = window.location.origin;
+                },
+                onFailure: function() {
+                    console.log("[DEBUG] Linkvertise onFailure triggered!");
+                }
+            });
+        }
+
+        function openOffer() {
+            console.log("[DEBUG] Opening offer...");
+            window.open("https://link-target.net/1196977/freerustrefined", "_blank");
+        }
+
+        // Initial check when the page loads
+        console.log("[DEBUG] Page loaded");
+        checkForValidHash();
+    </script>
 </head>
 <body>
     <h1>Complete the Linkvertise Offer to Get Your Key</h1>
@@ -21,72 +155,7 @@
         By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
         This key only works for you!
     </div>
-    <button id="offerButton" onclick="openOffer();">Complete Offer</button>
+    <button onclick="openOffer();">Complete Offer</button>
     <div id="key-display"></div>
-
-    <script>
-        const keys = ["key1-abc123", "key2-def456", "key3-ghi789"];
-        let usedKeys = [];
-        let offerCompleted = false;
-
-        // Function to display the key
-        function displayKey() {
-            const keyDisplay = document.getElementById("key-display");
-            if (keys.length > 0 && offerCompleted) {
-                const key = keys.shift();
-                usedKeys.push(key);
-                keyDisplay.innerHTML = `Your key is: <strong>${key}</strong>`;
-                // Hide the offer button after successful completion
-                document.getElementById("offerButton").classList.add("hidden");
-            }
-        }
-
-        function openOffer() {
-            window.open("https://link-target.net/1196977/freerustrefined", "_blank");
-            // Start checking for completion
-            checkForCompletion();
-        }
-
-        // Initialize Linkvertise
-        function initializeLinkvertise() {
-            if (typeof linkvertise === 'function') {
-                linkvertise(1196977, {
-                    whitelist: [],
-                    blacklist: [],
-                    onSuccess: function() {
-                        offerCompleted = true;
-                        displayKey();
-                    }
-                });
-            }
-        }
-
-        // Check for completion by monitoring localStorage
-        function checkForCompletion() {
-            const checkInterval = setInterval(() => {
-                // Check if the user completed the offer
-                if (localStorage.getItem('linkvertise_' + 1196977)) {
-                    offerCompleted = true;
-                    displayKey();
-                    clearInterval(checkInterval);
-                }
-            }, 1000);
-        }
-
-        // Check URL parameters for completion
-        function checkUrlParameters() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('completed')) {
-                offerCompleted = true;
-                displayKey();
-            }
-        }
-
-        // Initialize when page loads
-        window.onload = function() {
-            initializeLinkvertise();
-            checkUrlParameters();
-        };
-    </script>
 </body>
 </html>
