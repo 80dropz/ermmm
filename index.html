@@ -100,8 +100,8 @@
             whitelist: [],
             blacklist: [],
             onSuccess: function() {
-                // Redirect with a hash parameter (simulating the behavior of Linkvertise)
-                window.location.href = window.location.origin + "?hash=completed";
+                // Redirect with a hash parameter
+                window.location.href = window.location.origin + window.location.pathname + "?hash=completed";
             }
         });
 
