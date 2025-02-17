@@ -3,92 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Your Key</title>
+    <title>Instant Key Generator</title>
     <script src="https://publisher.linkvertise.com/cdn/linkvertise.js"></script>
     <style>
-        body { background-color: #121212; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 20px; text-align: center; }
-        h1 { color: #bb86fc; font-size: 24px; margin-bottom: 10px; }
-        .terms { font-size: 14px; color: #a0a0a0; margin-bottom: 20px; }
-        button { background-color: #bb86fc; color: #121212; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; transition: background-color 0.3s ease; margin-bottom: 20px; }
-        button:hover { background-color: #9a67ea; }
-        #key-display { margin-top: 20px; padding: 10px; background-color: #1e1e1e; border-radius: 5px; color: #ffffff; font-size: 18px; }
+        body { background: #1a1a1a; color: #fff; font-family: Arial; text-align: center; padding: 20px; }
+        #keyDisplay { background: #2d2d2d; padding: 20px; margin: 20px; border-radius: 5px; font-size: 1.2em; }
+        button { background: #bb86fc; color: #000; border: none; padding: 12px 24px; cursor: pointer; border-radius: 5px; }
     </style>
+</head>
+<body>
+    <h1>Get Your Key Instantly</h1>
+    <div id="keyDisplay">Click the button below to start</div>
+    <button onclick="openOffer()">Get Key Now</button>
+
     <script>
-        // Encrypted keys (base64 encoded)
-        const encodedKeys = [
-            'a2V5MS1hYmMxMjM=', // key1-abc123
-            'a2V5Mi1kZWY0NTY=', // key2-def456
-            'a2V5My1naGk3ODk='  // key3-ghi789
+        // Predefined list of keys
+        const keys = [
+            "KEY1-ABC-1234-5678",
+            "KEY2-DEF-9101-1121",
+            "KEY3-GHI-3141-5161"
         ];
         
-        // Decode and shuffle keys
-        let keys = encodedKeys.map(k => atob(k));
-        keys.sort(() => Math.random() - 0.5);
-        let usedKeys = JSON.parse(localStorage.getItem('usedKeys')) || [];
-
-        function showKey() {
-            const keyDisplay = document.getElementById("key-display");
-            const urlParams = new URLSearchParams(window.location.search);
-            
-            if(urlParams.has('hash')) {
-                // Get random available key
-                const availableKeys = keys.filter(k => !usedKeys.includes(k));
-                if(availableKeys.length > 0) {
-                    const randomKey = availableKeys[Math.floor(Math.random() * availableKeys.length)];
-                    usedKeys.push(randomKey);
-                    localStorage.setItem('usedKeys', JSON.stringify(usedKeys));
-                    keyDisplay.innerHTML = `Your key: <strong>${randomKey}</strong>`;
-                    
-                    // Clean URL without reload
-                    history.replaceState({}, '', location.pathname);
-                } else {
-                    keyDisplay.innerHTML = "No more keys available!";
-                }
-            } else {
-                keyDisplay.innerHTML = "Complete the offer to reveal your key";
-            }
+        // Check for hash parameter on page load
+        if(window.location.search.includes('hash=')) {
+            showRandomKey();
+            cleanUrl();
         }
 
-        function initializeLinkvertise() {
+        function showRandomKey() {
+            const randomIndex = Math.floor(Math.random() * keys.length);
+            document.getElementById("keyDisplay").innerHTML = 
+                `Your Key: <strong>${keys[randomIndex]}</strong>`;
+        }
+
+        function cleanUrl() {
+            // Remove hash parameter without reload
+            history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        function openOffer() {
+            // Open Linkvertise offer in new tab
+            window.open('https://link-target.net/1196977/freerustrefined', '_blank');
+            
+            // Initialize Linkvertise redirect
             linkvertise(1196977, {
                 onSuccess: () => {
-                    window.location.href = `${location.origin}?hash=${btoa(Date.now())}`;
-                },
-                onFailure: () => {
-                    console.log("Offer not completed");
+                    // Redirect back with random hash
+                    window.location.href = `${window.location.origin}?hash=${Math.random().toString(36).slice(2)}`;
                 }
             });
         }
-
-        // Initial load
-        showKey();
-        
-        // Handle Linkvertise loading
-        if(typeof linkvertise === 'function') {
-            initializeLinkvertise();
-        } else {
-            let loadAttempts = 0;
-            const loadInterval = setInterval(() => {
-                if(typeof linkvertise === 'function') {
-                    clearInterval(loadInterval);
-                    initializeLinkvertise();
-                } else if(loadAttempts++ > 10) {
-                    clearInterval(loadInterval);
-                    document.getElementById("key-display").innerHTML = "Please disable ad blockers";
-                }
-            }, 500);
-        }
     </script>
-</head>
-<body>
-    <h1>Complete the Linkvertise Offer to Get Your Key</h1>
-    <div class="terms">
-        By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
-        This key only works for you!
-    </div>
-    <button onclick="window.open('https://link-target.net/1196977/freerustrefined', '_blank')">
-        Complete Offer
-    </button>
-    <div id="key-display"></div>
 </body>
 </html>
