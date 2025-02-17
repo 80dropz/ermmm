@@ -12,21 +12,28 @@
         button { background-color: #bb86fc; color: #121212; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; transition: background-color 0.3s ease; margin-bottom: 20px; }
         button:hover { background-color: #9a67ea; }
         #key-display { margin-top: 20px; padding: 10px; background-color: #1e1e1e; border-radius: 5px; color: #ffffff; font-size: 18px; }
-        a { color: #bb86fc; text-decoration: none; }
-        a:hover { text-decoration: underline; }
     </style>
     <script>
         const keys = ["key1-abc123", "key2-def456", "key3-ghi789"];
         let usedKeys = [];
 
+        function getRandomKey() {
+            if (keys.length === 0) return null;
+            const randomIndex = Math.floor(Math.random() * keys.length);
+            return keys.splice(randomIndex, 1)[0];
+        }
+
         function displayKey() {
             const keyDisplay = document.getElementById("key-display");
-            if (keys.length > 0) {
-                const key = keys.shift();
+            const key = getRandomKey();
+            
+            if (key) {
                 usedKeys.push(key);
                 keyDisplay.innerHTML = `Your key is: <strong>${key}</strong>`;
+                // Clear URL hash after display
+                window.history.replaceState({}, document.title, window.location.pathname);
             } else {
-                keyDisplay.innerHTML = "Sorry, no more keys are available.";
+                keyDisplay.innerHTML = "No more keys available!";
             }
         }
 
@@ -34,51 +41,49 @@
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('hash')) {
                 displayKey();
-                // Clear the hash from URL
-                window.history.replaceState({}, document.title, window.location.pathname);
             }
         }
 
         function initializeLinkvertise() {
             linkvertise(1196977, {
-                whitelist: [],
-                blacklist: [],
-                onSuccess: function() {
-                    window.location.href = window.location.origin + "?hash=" + Date.now();
+                onSuccess: () => {
+                    // Redirect with random hash
+                    window.location.href = `${window.location.origin}?hash=${Math.random().toString(36).substr(2, 9)}`;
                 },
-                onFailure: function() {
+                onFailure: () => {
                     console.log("Offer not completed");
                 }
             });
         }
 
         function openOffer() {
-            window.open("https://link-target.net/1196977/freerustrefined", "_blank");
+            // Open in same tab for proper redirect
+            window.location.href = "https://link-target.net/1196977/freerustrefined";
         }
 
-        // Initial checks
+        // Initial check when page loads
         checkForHash();
         
-        // Linkvertise loader
-        let loadAttempts = 0;
-        const checkLV = setInterval(() => {
+        // Load Linkvertise
+        let lvCheckCount = 0;
+        const lvInterval = setInterval(() => {
             if (typeof linkvertise === 'function') {
-                clearInterval(checkLV);
+                clearInterval(lvInterval);
                 initializeLinkvertise();
-            } else if (loadAttempts++ > 10) {
-                clearInterval(checkLV);
-                console.log("Failed to load Linkvertise");
+            } else if (lvCheckCount++ > 10) {
+                clearInterval(lvInterval);
+                console.log("Linkvertise failed to load");
             }
         }, 500);
     </script>
 </head>
 <body>
-    <h1>Complete the Linkvertise Offer to Get Your Ke sy</h1>
+    <h1>Complete the Linkvertise Offer to Get Your Key</h1>
     <div class="terms">
         By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
         This key only works for you!
     </div>
-    <button onclick="openOffer();">Complete Offer</button>
-    <div id="key-display"></div>
+    <div id="key-display">Complete the offer to reveal your key</div>
+    <button onclick="openOffer()">Complete Offer</button>
 </body>
 </html>
