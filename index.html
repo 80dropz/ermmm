@@ -14,41 +14,45 @@
         #key-display { margin-top: 20px; padding: 10px; background-color: #1e1e1e; border-radius: 5px; color: #ffffff; font-size: 18px; }
     </style>
     <script>
-        const keys = ["key1-abc123", "key2-def456", "key3-ghi789"];
-        let usedKeys = [];
+        // Encrypted keys (base64 encoded)
+        const encodedKeys = [
+            'a2V5MS1hYmMxMjM=', // key1-abc123
+            'a2V5Mi1kZWY0NTY=', // key2-def456
+            'a2V5My1naGk3ODk='  // key3-ghi789
+        ];
+        
+        // Decode and shuffle keys
+        let keys = encodedKeys.map(k => atob(k));
+        keys.sort(() => Math.random() - 0.5);
+        let usedKeys = JSON.parse(localStorage.getItem('usedKeys')) || [];
 
-        function getRandomKey() {
-            if (keys.length === 0) return null;
-            const randomIndex = Math.floor(Math.random() * keys.length);
-            return keys.splice(randomIndex, 1)[0];
-        }
-
-        function displayKey() {
+        function showKey() {
             const keyDisplay = document.getElementById("key-display");
-            const key = getRandomKey();
-            
-            if (key) {
-                usedKeys.push(key);
-                keyDisplay.innerHTML = `Your key is: <strong>${key}</strong>`;
-                // Clear URL hash after display
-                window.history.replaceState({}, document.title, window.location.pathname);
-            } else {
-                keyDisplay.innerHTML = "No more keys available!";
-            }
-        }
-
-        function checkForHash() {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('hash')) {
-                displayKey();
+            
+            if(urlParams.has('hash')) {
+                // Get random available key
+                const availableKeys = keys.filter(k => !usedKeys.includes(k));
+                if(availableKeys.length > 0) {
+                    const randomKey = availableKeys[Math.floor(Math.random() * availableKeys.length)];
+                    usedKeys.push(randomKey);
+                    localStorage.setItem('usedKeys', JSON.stringify(usedKeys));
+                    keyDisplay.innerHTML = `Your key: <strong>${randomKey}</strong>`;
+                    
+                    // Clean URL without reload
+                    history.replaceState({}, '', location.pathname);
+                } else {
+                    keyDisplay.innerHTML = "No more keys available!";
+                }
+            } else {
+                keyDisplay.innerHTML = "Complete the offer to reveal your key";
             }
         }
 
         function initializeLinkvertise() {
             linkvertise(1196977, {
                 onSuccess: () => {
-                    // Redirect with random hash
-                    window.location.href = `${window.location.origin}?hash=${Math.random().toString(36).substr(2, 9)}`;
+                    window.location.href = `${location.origin}?hash=${btoa(Date.now())}`;
                 },
                 onFailure: () => {
                     console.log("Offer not completed");
@@ -56,25 +60,24 @@
             });
         }
 
-        function openOffer() {
-            // Open in same tab for proper redirect
-            window.location.href = "https://link-target.net/1196977/freerustrefined";
-        }
-
-        // Initial check when page loads
-        checkForHash();
+        // Initial load
+        showKey();
         
-        // Load Linkvertise
-        let lvCheckCount = 0;
-        const lvInterval = setInterval(() => {
-            if (typeof linkvertise === 'function') {
-                clearInterval(lvInterval);
-                initializeLinkvertise();
-            } else if (lvCheckCount++ > 10) {
-                clearInterval(lvInterval);
-                console.log("Linkvertise failed to load");
-            }
-        }, 500);
+        // Handle Linkvertise loading
+        if(typeof linkvertise === 'function') {
+            initializeLinkvertise();
+        } else {
+            let loadAttempts = 0;
+            const loadInterval = setInterval(() => {
+                if(typeof linkvertise === 'function') {
+                    clearInterval(loadInterval);
+                    initializeLinkvertise();
+                } else if(loadAttempts++ > 10) {
+                    clearInterval(loadInterval);
+                    document.getElementById("key-display").innerHTML = "Please disable ad blockers";
+                }
+            }, 500);
+        }
     </script>
 </head>
 <body>
@@ -83,7 +86,9 @@
         By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
         This key only works for you!
     </div>
-    <div id="key-display">Complete the offer to reveal your key</div>
-    <button onclick="openOffer()">Complete Offer</button>
+    <button onclick="window.open('https://link-target.net/1196977/freerustrefined', '_blank')">
+        Complete Offer
+    </button>
+    <div id="key-display"></div>
 </body>
 </html>
