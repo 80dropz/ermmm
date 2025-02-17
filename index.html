@@ -6,7 +6,6 @@
     <title>Get Your Key</title>
     <script src="https://publisher.linkvertise.com/cdn/linkvertise.js"></script>
     <style>
-        /* Your original CSS styles (unchanged) */
         body { background-color: #121212; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 20px; text-align: center; }
         h1 { color: #bb86fc; font-size: 24px; margin-bottom: 10px; }
         .terms { font-size: 14px; color: #a0a0a0; margin-bottom: 20px; }
@@ -20,7 +19,7 @@
         const keys = ["key1-abc123", "key2-def456", "key3-ghi789"];
         let usedKeys = [];
 
-        // Shuffle function for initial randomization
+        // Shuffle keys on load
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -28,145 +27,96 @@
             }
         }
 
-        // Modified displayKey function with random selection
         function displayKey() {
-            console.log("[DEBUG] Displaying key...");
             const keyDisplay = document.getElementById("key-display");
-            
             if (keys.length > 0) {
-                // Get random index and remove the key
                 const randomIndex = Math.floor(Math.random() * keys.length);
                 const key = keys.splice(randomIndex, 1)[0];
                 usedKeys.push(key);
-                
                 keyDisplay.innerHTML = `Your key is: <strong>${key}</strong>`;
-                console.log("[DEBUG] Random key displayed:", key);
             } else {
-                keyDisplay.innerHTML = "Sorry, no more keys are available.";
-                console.log("[DEBUG] No keys left");
+                keyDisplay.innerHTML = "No more keys available";
             }
         }
 
-        // Validate the Linkvertise hash using a proxy server
         async function validateHash(hash) {
-            console.log("[DEBUG] Validating hash:", hash);
             try {
-                const proxyUrl = "https://your-proxy-server.com/api";
-                const apiUrl = `${proxyUrl}?url=${encodeURIComponent(window.location.href)}`;
-                console.log("[DEBUG] Calling API via proxy:", apiUrl);
-
-                const response = await fetch(apiUrl, {
+                // Replace with your actual proxy endpoint
+                const proxyUrl = "https://your-proxy-server.com/validate";
+                const response = await fetch(`${proxyUrl}?hash=${encodeURIComponent(hash)}`, {
                     headers: { 'Content-Type': 'application/json' }
                 });
 
-                console.log("[DEBUG] API Response Status:", response.status);
                 const data = await response.json();
-                console.log("[DEBUG] API Response Data:", data);
-
-                if (data.success) {
-                    console.log("[DEBUG] Hash is valid!");
-                    return true;
-                } else {
-                    console.log("[DEBUG] Hash is invalid or expired.");
-                    return false;
-                }
+                return data.success === true;
             } catch (error) {
-                console.error("[DEBUG] Validation failed:", error);
+                console.error("Validation failed:", error);
                 return false;
             }
         }
 
-        // Check URL for a valid hash
         async function checkForValidHash() {
-            console.log("[DEBUG] Checking for valid hash...");
             const urlParams = new URLSearchParams(window.location.search);
             const hash = urlParams.get("hash");
 
             if (hash) {
-                console.log("[DEBUG] Hash found in URL:", hash);
                 const isValid = await validateHash(hash);
-                console.log("[DEBUG] Hash validation result:", isValid);
-
                 if (isValid) {
                     displayKey();
+                    // Clear hash from URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
                 } else {
-                    document.getElementById("key-display").innerHTML = "Invalid or expired offer. Please complete the offer again.";
-                    console.log("[DEBUG] Invalid hash");
+                    document.getElementById("key-display").innerHTML = "Invalid offer. Please try again.";
                 }
-            } else {
-                console.log("[DEBUG] No hash found in URL");
             }
         }
-
-        // Check if Linkvertise script is loaded
-        function isLinkvertiseLoaded() {
-            return typeof linkvertise === 'function';
-        }
-
-        // Fallback if Linkvertise script fails to load
-        function handleLinkvertiseFailure() {
-            console.error("[DEBUG] Linkvertise script failed to load. Please disable ad blockers or refresh the page.");
-            document.getElementById("key-display").innerHTML = "Failed to load offer. Please disable ad blockers or refresh the page.";
-        }
-
-        // Wait for the script to load
-        function waitForLinkvertise(callback, fallback) {
-            const maxAttempts = 10;
-            let attempts = 0;
-
-            const interval = setInterval(() => {
-                if (isLinkvertiseLoaded()) {
-                    clearInterval(interval);
-                    callback();
-                } else if (attempts >= maxAttempts) {
-                    clearInterval(interval);
-                    fallback();
-                }
-                attempts++;
-            }, 500);
-        }
-
-        // Initialize Linkvertise after the script is loaded
-        waitForLinkvertise(
-            () => {
-                console.log("[DEBUG] Linkvertise script loaded successfully!");
-                initializeLinkvertise();
-            },
-            handleLinkvertiseFailure
-        );
 
         function initializeLinkvertise() {
             linkvertise(1196977, {
                 whitelist: [],
                 blacklist: [],
-                onSuccess: function() {
-                    console.log("[DEBUG] Linkvertise onSuccess triggered!");
-                    window.location.href = window.location.origin;
+                onSuccess: () => {
+                    window.location.href = `${window.location.origin}?hash=${Date.now()}`;
                 },
-                onFailure: function() {
-                    console.log("[DEBUG] Linkvertise onFailure triggered!");
+                onFailure: () => {
+                    document.getElementById("key-display").innerHTML = "Offer not completed";
                 }
             });
         }
 
         function openOffer() {
-            console.log("[DEBUG] Opening offer...");
             window.open("https://link-target.net/1196977/freerustrefined", "_blank");
         }
 
-        // Initial setup when page loads
-        console.log("[DEBUG] Page loaded");
-        shuffleArray(keys); // Shuffle keys on initial load
-        checkForValidHash();
+        // Initial setup
+        (function init() {
+            shuffleArray(keys);
+            checkForValidHash();
+            
+            if (typeof linkvertise === 'function') {
+                initializeLinkvertise();
+            } else {
+                let attempts = 0;
+                const checkInterval = setInterval(() => {
+                    if (typeof linkvertise === 'function') {
+                        clearInterval(checkInterval);
+                        initializeLinkvertise();
+                    } else if (attempts++ > 10) {
+                        clearInterval(checkInterval);
+                        document.getElementById("key-display").innerHTML = "Failed to load offer system";
+                    }
+                }, 500);
+            }
+        })();
     </script>
 </head>
 <body>
-    <h1>Complete the Linkvertise Offer to Get Your Key s</h1>
+    <h1>Complete the Offer to Get Your Key</h1>
     <div class="terms">
-        By using this key you agree to our Terms of Service. Violating any of these rules will lead to a blocklist.<br>
-        This key only works for you!
+        By using this key you agree to our Terms of Service.<br>
+        This key is single-use and personally assigned!
     </div>
-    <button onclick="openOffer();">Complete Offer</button>
+    <button onclick="openOffer()">Complete Offer</button>
     <div id="key-display"></div>
 </body>
 </html>
