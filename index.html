@@ -20,15 +20,27 @@
         const keys = ["key1-abc123", "key2-def456", "key3-ghi789"];
         let usedKeys = [];
 
-        // Function to display the key
+        // Shuffle function for initial randomization
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Modified displayKey function with random selection
         function displayKey() {
             console.log("[DEBUG] Displaying key...");
             const keyDisplay = document.getElementById("key-display");
+            
             if (keys.length > 0) {
-                const key = keys.shift();
+                // Get random index and remove the key
+                const randomIndex = Math.floor(Math.random() * keys.length);
+                const key = keys.splice(randomIndex, 1)[0];
                 usedKeys.push(key);
+                
                 keyDisplay.innerHTML = `Your key is: <strong>${key}</strong>`;
-                console.log("[DEBUG] Key displayed:", key);
+                console.log("[DEBUG] Random key displayed:", key);
             } else {
                 keyDisplay.innerHTML = "Sorry, no more keys are available.";
                 console.log("[DEBUG] No keys left");
@@ -39,8 +51,7 @@
         async function validateHash(hash) {
             console.log("[DEBUG] Validating hash:", hash);
             try {
-                // Replace with your proxy server URL
-                const proxyUrl = "https://your-proxy-server.com/api"; // Example: "https://my-proxy.com/validate"
+                const proxyUrl = "https://your-proxy-server.com/api";
                 const apiUrl = `${proxyUrl}?url=${encodeURIComponent(window.location.href)}`;
                 console.log("[DEBUG] Calling API via proxy:", apiUrl);
 
@@ -52,7 +63,6 @@
                 const data = await response.json();
                 console.log("[DEBUG] API Response Data:", data);
 
-                // Check if the response contains `success: true`
                 if (data.success) {
                     console.log("[DEBUG] Hash is valid!");
                     return true;
@@ -113,7 +123,7 @@
                     fallback();
                 }
                 attempts++;
-            }, 500); // Check every 500ms
+            }, 500);
         }
 
         // Initialize Linkvertise after the script is loaded
@@ -144,8 +154,9 @@
             window.open("https://link-target.net/1196977/freerustrefined", "_blank");
         }
 
-        // Initial check when the page loads
+        // Initial setup when page loads
         console.log("[DEBUG] Page loaded");
+        shuffleArray(keys); // Shuffle keys on initial load
         checkForValidHash();
     </script>
 </head>
